@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+		<div class="breadcrumbs">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<p class="bread"><span><a href="{% url 'index' %}">Home</a></span> / <span>About</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="colorlib-about">
+			<div class="container">
+				<div class="row row-pb-lg">
+					<div class="col-sm-6 mb-3">
+						<div class="video colorlib-video" style="background-image: url(images/about.jpg);">
+							<a href="https://vimeo.com/channels/staffpicks/93951774" class="popup-vimeo"><i class="icon-play3"></i></a>
+							<div class="overlay"></div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="about-wrap">
+							<h2>Our Story</h2>
+							<p>Each Misa candle is a labour of love - an extension of our slow-living philosophy 
+								and thoughtfully designed to help you drift off to a happy space.</p>
+							<h2>Extraordinary Candles</h2>
+							<p>Handmade in the finest tradition of luxury candle-making, our fragrances are painstakingly curated by the best perfumers in France and the USA. All our candles are hand poured in small batches allowing for utmost attention to detail and quality.</p>
+							<h2>Made With Love</h2>
+							<p>We prioritize the environment in every aspect of our candle production. Our candles embody all things good, as we carefully select our ingredients and processes. We exclusively use plant-based wax or a traditional wax blend to create our products.</p>
+							<h2>The Balancing Act</h2>
+							<p>Believing in the Swedish concept of Lagom, which literally means 'just right', all Misa candles have the optimum amount of fragrance intensity and throw - neither overpowering nor underwhelming, just right. Even without being lit, our fragrances pervade through a space, giving it a signature scent of its own.</p>
+							<h2>Tender Loving Care</h2>
+							<p>We believe in living calmly, mindfully and joyfully and this philosophy reflects in our collections, which are designed to suit every taste and occasion. 
+								For us, good service doesn't stop at delivering products, it inspires us to care for you even after a sale. Light a MISA candle today and step into your happy space.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+{% endblock %}

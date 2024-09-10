@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<p class="bread"><span><a href="{% url 'index' %}">Home</a></span> / <span>Shopping Cart</span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="colorlib-product">
+	<div class="container">
+		{% if cart_items %}
+		<div class="row row-pb-lg">
+			<div class="col-md-10 offset-md-1">
+				<div class="process-wrap">
+					<div class="process text-center active">
+						<p><span>01</span></p>
+						<h3>Shopping Cart</h3>
+					</div>
+					<div class="process text-center">
+						<p><span>02</span></p>
+						<h3>Checkout</h3>
+					</div>
+					<div class="process text-center">
+						<p><span>03</span></p>
+						<h3>Order Complete</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row row-pb-lg">
+			<div class="col-md-12">
+				<div class="product-name d-flex">
+					<div class="one-forth text-left px-4">
+						<span>Product Details</span>
+					</div>
+					<div class="one-eight text-center">
+						<span>Price</span>
+					</div>
+					<div class="one-eight text-center">
+						<span>Quantity</span>
+					</div>
+					<div class="one-eight text-center">
+						<span>Total</span>
+					</div>
+					<div class="one-eight text-center px-4">
+						<span>Remove</span>
+					</div>
+				</div>
+				{% for item in cart_items %}
+				<div class="product-cart d-flex">
+					<div class="one-forth">
+						<div class="product-img" style="background-image: url('{{item.product.image.url}}');">
+						</div>
+						<div class="display-tc">
+							<h3>{{item.product.name}}</h3>
+						</div>
+					</div>
+					<div class="one-eight text-center">
+						<div class="display-tc">
+							<span class="price">₹ {{item.product.retail_price}}</span>
+						</div>
+					</div>
+					<div class="one-eight text-center">
+						<div class="display-tc">
+							<form action="{% url 'remove_from_cart' %}" method="POST">
+								{% csrf_token %}
+								<input type="hidden" name="inventory_id" value="{{ item.product.id }}">
+								<button type="submit" class="btn btn-secondary decrement-btn">-</button>
+							</form>
+							<input type="text" id="quantity" name="quantity" class="form-control input-number text-center" value="{{ item.quantity }}" min="1" readonly>
+							{% for i in inventory %}
+							{% if i.product == item.product %}
+							{% if item.quantity < i.quantity_in_stock %}
+							<form action="{% url 'add_to_cart' %}" method="POST">
+								{% csrf_token %}
+								<input type="hidden" name="inventory_id" value="{{ item.product.id }}">
+								<input type="hidden" name="quantity" value="1" placeholder="1">
+								<button type="submit" class="btn btn-secondary increment-btn">+</button>
+							</form>
+							{% else %}
+								<button type="button" class="btn btn-secondary disabled">+</button>
+							{% endif %}
+							{% endif %}
+							{% endfor %} 
+						</div>
+					</div>
+					<div class="one-eight text-center">
+						<div class="display-tc">
+							<span class="price">₹ {{ item.sub_total|floatformat:2 }}</span>
+						</div>
+					</div>
+					<div class="one-eight text-center">
+						<div class="display-tc">
+							<a href="{% url 'delete_item_in_cart' item.product.id %}" class="closed"></a>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="row row-pb-lg">
+			<div class="col-md-12">
+				<div class="total-wrap">
+					<div class="row">
+						<div class="col-sm-8">
+							<form action="#">
+								<div class="row form-group">
+									<div class="col-sm-9">
+										<input type="text" name="quantity" class="form-control input-number" placeholder="Your Coupon Number...">
+									</div>
+									<div class="col-sm-3">
+										<input type="submit" value="Apply Coupon" class="btn btn-primary">
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-sm-4 text-center">
+							<div class="total">
+								<div class="sub">
+									<p><span>Subtotal:</span> <span>₹ {{ total_price }}</span></p>
+									<p><span>Delivery:</span> <span>Free</span></p>
+								</div>
+								<div class="grand-total">
+									<p><span><strong>Total:</strong></span> <span>₹{{ total_price }}</span></p>
+								</div>
+								<form action="{% url 'checkout' %}" method="POST">
+									{% csrf_token %}
+									<input type="hidden" name="total_price" value="{{ total_price }}">
+									<button type="submit" class="btn btn-primary mt-3">Proceed To Checkout</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% else %}
+        <center>
+            <h4>Your Shopping Cart is Empty!</h4><br>
+            <a href="{% url 'shop' %}" class="btn btn-primary">Go To Shop</a>
+        </center>
+        {% endif %}
+	</div>
+</div>
+
+{% endblock %}

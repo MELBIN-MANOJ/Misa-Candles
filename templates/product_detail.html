@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<p class="bread"><span><a href="{% url 'index' %}">Home</a></span> / <span>{{ inventory.product.name }}</span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="colorlib-product">
+	<div class="container">
+		<div class="row row-pb-lg product-detail-wrap">
+			<div class="col-sm-6">
+				<div class="owl-carousel">
+					<div class="item">
+						<div class="product-entry border">
+							<a href="#" class="prod-img">
+								<img src="{{ inventory.product.image.url }}" class="img-fluid" alt="Free html5 bootstrap 4 template">
+							</a>
+						</div>
+					</div>
+					<div class="item">
+						<div class="product-entry border">
+							<a href="#" class="prod-img">
+								<img src="{{ inventory.product.image.url }}" class="img-fluid" alt="Free html5 bootstrap 4 template">
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="product-desc">
+					<h3>{{ inventory.product.name }}</h3>
+					<p class="price">
+						<span>Rs. {{ inventory.product.retail_price }}</span> 
+					</p>
+					<p>{{ inventory.product.description }}</p>
+
+					<!-- <div class="size-wrap">
+						<div class="block-26 mb-4">
+								<h4>Width</h4>
+							<ul>
+								<li><a href="#">M</a></li>
+								<li><a href="#">W</a></li>
+							</ul>
+						</div>
+					</div> -->
+
+					{% if user.is_authenticated %}  
+					<form action="{% url 'add_to_cart' %}" method="POST" id="myForm">
+						{% csrf_token %}
+						<input type="hidden" name="inventory_id" value="{{ inventory.product.id }}">
+						<div class="input-group mb-4">
+							<span class="input-group-btn">
+								<button type="button" class="quantity-left-minus btn" data-type="minus">
+									<i class="icon-minus2"></i>
+								</button>
+							</span>
+							<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="{{ inventory.quantity_in_stock }}" readonly>
+							<span class="input-group-btn ml-1">
+								<button type="button" class="quantity-right-plus btn" data-type="plus">
+									<i class="icon-plus2"></i>
+								</button>
+							</span>
+						</div>
+					
+						<div class="row">
+							<div class="col-sm-12 text-center">
+								<p class="addtocart"><a href="#" onclick="submitForm()" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+							</div>
+						</div>
+					</form>
+					{% else %}
+					<div class="input-group mb-4">
+						<span class="input-group-btn">
+							<button type="button" class="quantity-left-minus btn" data-type="minus">
+								<i class="icon-minus2"></i>
+							</button>
+						</span>
+						<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100" readonly>
+						<span class="input-group-btn ml-1">
+							<button type="button" class="quantity-right-plus btn" data-type="plus">
+								<i class="icon-plus2"></i>
+							</button>
+						</span>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 text-center">
+							<p class="addtocart"><a href="{% url 'login' %}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.quantity-right-plus').click(function(e) {
+            e.preventDefault();
+            var quantityInput = $('#quantity');
+            var currentValue = parseInt(quantityInput.val());
+            var maxValue = parseInt(quantityInput.attr('max'));
+            if (!isNaN(currentValue) && currentValue < maxValue) {
+                quantityInput.val(currentValue + 1);
+            }
+        });
+
+        $('.quantity-left-minus').click(function(e) {
+            e.preventDefault();
+            var quantityInput = $('#quantity');
+            var currentValue = parseInt(quantityInput.val());
+            var minValue = parseInt(quantityInput.attr('min'));
+            if (!isNaN(currentValue) && currentValue > minValue) {
+                quantityInput.val(currentValue - 1);
+            }
+        });
+    });
+</script>
+<script>
+    function submitForm() {
+        document.getElementById('myForm').submit();
+    }
+</script>
+
+{% endblock %}

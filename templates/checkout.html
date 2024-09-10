@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<p class="bread"><span><a href="{% url 'index' %}">Home</a></span> / <span>Checkout</span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="colorlib-product">
+	<div class="container">
+		<div class="row row-pb-lg">
+			<div class="col-sm-10 offset-md-1">
+				<div class="process-wrap">
+					<div class="process text-center active">
+						<p><span>01</span></p>
+						<h3>Shopping Cart</h3>
+					</div>
+					<div class="process text-center active">
+						<p><span>02</span></p>
+						<h3>Checkout</h3>
+					</div>
+					<div class="process text-center">
+						<p><span>03</span></p>
+						<h3>Order Complete</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+
+			<div class="col-lg-8">
+				<form method="post" class="colorlib-form">
+					<h2>Billing Details</h2>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="address">Address</label>
+								<textarea id="address"  name="address" class="form-control" placeholder="Enter your address here">{% if customer.address %}{{customer.address}}{% endif %}</textarea>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="col-lg-4">
+				<form action="{% url 'place_order' %}" method="POST">
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-md-12">
+							<div class="cart-detail">
+								<h2>Cart Total</h2>
+								<ul>
+									<li>
+										<span>Items</span> <span>Price</span>
+										<ul>
+											{% for item in cart_items %}
+											<li><span>{{item.quantity}} x {{item.product.name}}</span> <span>₹ {{ item.sub_total|floatformat:2 }}</span></li>
+											{% endfor %}
+										</ul>
+									</li>
+									<li><span>Order Total</span> <span>₹ {{ total_price }}</span></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="w-100"></div>
+
+						<div class="col-md-12">
+							<div class="cart-detail">
+                                <input type="hidden" name="address" id="hiddenAddress" value="{% if customer.address %}{{customer.address}}{% endif %}" required>
+								<h2>Payment Method</h2>
+								<div class="form-group">
+									<div class="col-md-12">
+										<div class="radio">
+											<label><input type="radio" name="payment" value="Cash On Delivery" checked> Card Payment</label>
+											<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                                data-key="{{ STRIPE_PUBLIC_KEY }}"
+                                                data-name="Misa Candles"
+                                                data-description="Payment Gateway"
+                                                data-amount="0"
+                                                data-currency="INR"
+                                                data-locale="auto"
+                                                data-email="{{ request.user.email }}"
+                                                data-allow-remember-me="true">
+                                            </script>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-md-12">
+										<div class="checkbox">
+											<label><input type="checkbox" value="" required> I have read and accept the terms and conditions</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p><button type="submit" class="btn btn-primary">Place an order</button></p>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the external input field and the hidden input field
+        var addressInput = document.getElementById('address');
+        var hiddenAddressInput = document.getElementById('hiddenAddress');
+
+        // Update hidden input field when external input field changes
+        addressInput.addEventListener('input', function() {
+            hiddenAddressInput.value = addressInput.value;
+        });
+
+        // Handle form submission when "Place Order" button is clicked
+        var placeOrderBtn = document.getElementById('placeOrderBtn');
+        placeOrderBtn.addEventListener('click', function() {
+            document.getElementById('orderForm').submit();
+        });
+    });
+
+</script>
+{% endblock %}

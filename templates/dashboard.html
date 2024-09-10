@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<p class="bread"><span><a href="{% url 'index' %}">Home</a></span> / <span>Dashboard</span></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="colorlib-contact">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<h3>Profile Information</h3>
+				<div class="row contact-info-wrap">
+					<div class="col-md-3">
+						<p><span><i class="icon-user"></i></span> {{customer.first_name}} {{customer.last_name}}</p>
+					</div>
+					<div class="col-md-3">
+						<p><span><i class="icon-phone3"></i></span> <a href="tel://1234567920"> {{customer.phone}}</a></p>
+					</div>
+					<div class="col-md-3">
+						<p><span><i class="icon-paperplane"></i></span> <a href="mailto:{{customer.email}}">{{customer.email}}</a></p>
+					</div>
+					<div class="col-md-3">
+						<p><span><i class="icon-location"></i></span> <a href="#">{{customer.address}}</a></p>
+					</div>
+				</div>
+				<button class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal">Edit Profile</button>
+				<button class="btn btn-secondary" data-toggle="modal" data-target="#changePassword">Change Password</button>
+			</div>
+			
+		</div>
+		<div class="row mt-5">
+			<div class="col-lg-12">
+				<div class="cart-detail">
+					<h2>Recent  Orders</h2>
+					<ul>
+						<li>
+							<span><strong>Orders</strong></span> <span><strong>Status</strong></span>
+							<ul>
+								{% for order in orders %}
+								{% if forloop.counter <= 5 %}
+								<li><a href="{% url 'order_details' order.id %}"><span>{{ order.product.name|truncatechars:40 }} x {{order.quantity}}</span> <span>{{order.order.status}}</span></a></li>
+								{% endif %}
+								{% endfor %}	
+							</ul>
+							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#seeMoreOrders">See more</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal to Edit Profile -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="editProfileForm" action="{% url 'edit_profile' %}" method="POST">
+					{% csrf_token %}
+					<div class="row">
+						<div class="col-lg-6 form-group">
+							<label for="first_name">First Name:</label>
+							<input type="text" class="form-control" id="first_name" name="first_name" value="{{ customer.first_name }}">
+						</div>
+						<div class="col-lg-6 form-group">
+							<label for="last_name">Last Name:</label>
+							<input type="text" class="form-control" id="last_name" name="last_name" value="{{ customer.last_name }}">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="email">Email:</label>
+						<input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}">
+					</div>
+					<div class="form-group">
+						<label for="phone">Phone Number:</label>
+						<input type="text" class="form-control" id="phone" name="phone" value="{{ customer.phone }}">
+					</div>
+					<div class="form-group">
+						<label for="address">Address:</label>
+						<textarea class="form-control" id="address" name="address" placeholder="Address ...">{% if customer.address %}{{ customer.address }}{% endif %}</textarea>
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-success">Save Changes</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal to Change Password-->
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePassword" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="changePasswordForm" action="{% url 'change_password' %}" method="POST">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="oldpassword">Old Password:</label>
+						<input type="password" class="form-control" id="oldPassword" name="oldPassword">
+					</div>
+					<div class="form-group">
+						<label for="newPassword">New Password:</label>
+						<input type="password" class="form-control" id="newPassword" name="newPassword">
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-success">Change Password</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Order modal -->
+<div class="modal fade"  id="seeMoreOrders" tabindex="-1" aria-labelledby="seeMoreOrdersLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable"  role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="seeMoreOrdersLabel">Past Orders</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="cart-detail">
+					<ul>
+						<li><span><strong>Orders</strong></span> <span><strong>Status</strong></span></li>
+						{% for order in orders %}
+						<li><a href="{% url 'order_details' order.id %}"><span>{{order.product.name}} ({{order.quantity}})</span><span>{{order.order.status}}</span></a></li>
+						{% endfor %}
+					</ul>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Include jQuery and Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}
